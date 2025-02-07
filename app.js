@@ -1,14 +1,46 @@
 //------Loading-Page------
-function loadGame() {
-  setTimeout(() => {
-      document.getElementById('loadingScreen').style.opacity = '0'; 
-      setTimeout(() => {
-          document.getElementById('loadingScreen').style.display = 'none'; 
-          document.getElementById('gameContainer').style.display = 'block'; 
-      }, 500); 
-  }, 3000); 
+
+let gameStarted = false; 
+
+function startCountdown(callback) {
+    const countdownScreen = document.getElementById("countdownScreen");
+    let count = 3;
+
+    countdownScreen.style.opacity = "1"; 
+
+    const interval = setInterval(() => {
+        if (count > 0) {
+            countdownScreen.textContent = count;
+            count--;
+        } else {
+            countdownScreen.textContent = "Game Start!";
+            clearInterval(interval);
+            setTimeout(() => {
+                countdownScreen.style.opacity = "0"; 
+                setTimeout(() => {
+                    countdownScreen.style.display = "none";
+                    gameStarted = true; 
+                    callback(); 
+                }, 500);
+            }, 1000);
+        }
+    }, 1000);
 }
-loadGame();
+
+function loadGame() {
+    setTimeout(() => {
+        const loadingScreen = document.getElementById('loadingScreen');
+        loadingScreen.style.opacity = '0'; 
+
+        setTimeout(() => {
+            loadingScreen.style.display = 'none'; 
+            startCountdown(() => {
+                document.getElementById('gameContainer').style.display = 'block'; 
+            });
+        }, 1000); 
+    }, 3000); 
+}
+document.addEventListener("DOMContentLoaded", loadGame);
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -141,30 +173,28 @@ playerPositions.forEach(pos => {
 
 // Movement Controls (Only move mainPlayer)
 let moveDirection = { forward: false, backward: false, left: false, right: false };
-const moveSpeed = 0.03;
+const moveSpeed = 0.02;
 
-document.addEventListener('keydown', (event) => {
-  if (!mainPlayer) return; // Ensure main player is loaded
+document.addEventListener("keydown", (event) => {
+  if (!gameStarted) return; // Prevent movement before countdown ends
 
   switch (event.key) {
-    case 'ArrowUp':
+    case "ArrowUp":
       moveDirection.forward = true;
-      gsap.to(mainPlayer.rotation, { y: Math.PI, duration: 0.2 });
       break;
-    case 'ArrowDown':
+    case "ArrowDown":
       moveDirection.backward = true;
-      gsap.to(mainPlayer.rotation, { y: 0, duration: 0.2 });
       break;
-    case 'ArrowLeft':
+    case "ArrowLeft":
       moveDirection.left = true;
-      gsap.to(mainPlayer.rotation, { y: Math.PI / 2, duration: 0.2 });
       break;
-    case 'ArrowRight':
+    case "ArrowRight":
       moveDirection.right = true;
-      gsap.to(mainPlayer.rotation, { y: -Math.PI / 2, duration: 0.2 });
       break;
   }
 });
+
+
 
 document.addEventListener('keyup', (event) => {
   switch (event.key) {
@@ -175,7 +205,7 @@ document.addEventListener('keyup', (event) => {
   }
 });
 
-// Update movement
+//-------Update movement----------
 function animate() {
   requestAnimationFrame(animate);
 
@@ -191,7 +221,6 @@ function animate() {
 animate();
 
 //-----------Start-&-Finish-Line---
-
 function createLine(positionZ, color) {
   const geometry = new THREE.PlaneGeometry(17, 0.2); 
   const material = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
@@ -204,7 +233,6 @@ createLine(16, 0xffffff);
 createLine(-6, 0xff0000);
 
 //---------Move the Players---------
-
 const randomPlayerSpeedMin = 0.5; 
 const randomPlayerSpeedMax = 0.7; 
 const redLineZ = -6; 
@@ -213,12 +241,14 @@ const moveIntervalTime = 3000;
 let playerMoves = [];
 
 function movePlayersRandomly() {
+  if (!gameStarted) return; 
+
   players.forEach((player, index) => {
     if (index !== 0) { 
       if (!playerMoves[index]) {
         playerMoves[index] = {
           lastMoveTime: Date.now(),
-          speed: Math.random() * (randomPlayerSpeedMax - randomPlayerSpeedMin) + randomPlayerSpeedMin, // Assign random speed to each player
+          speed: Math.random() * (randomPlayerSpeedMax - randomPlayerSpeedMin) + randomPlayerSpeedMin,
         };
       }
 
@@ -237,19 +267,244 @@ function movePlayersRandomly() {
 function animate() {
   requestAnimationFrame(animate);
 
-  if (mainPlayer) {
-    if (moveDirection.forward) mainPlayer.position.z -= moveSpeed;
-    if (moveDirection.backward) mainPlayer.position.z += moveSpeed;
-    if (moveDirection.left) mainPlayer.position.x -= moveSpeed;
-    if (moveDirection.right) mainPlayer.position.x += moveSpeed;
-  }
+  if (gameStarted) {
+    if (mainPlayer) {
+      if (moveDirection.forward) mainPlayer.position.z -= moveSpeed;
+      if (moveDirection.backward) mainPlayer.position.z += moveSpeed;
+      if (moveDirection.left) mainPlayer.position.x -= moveSpeed;
+      if (moveDirection.right) mainPlayer.position.x += moveSpeed;
+    }
 
-  movePlayersRandomly();
+    movePlayersRandomly();
+  }
 
   renderer.render(scene, camera);
 }
 animate();
 
+let dollLookTime = null;
+const movementDelay = 1000; 
+
+//--------Players-Fall------------
+function makePlayerFall(player) {
+    gsap.to(player.rotation, { x: Math.PI / 2, duration: 0.5 }); 
+    gsap.to(player.position, { y: player.position.y - 1, duration: 0.5 }); 
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    if (gameStarted) {
+        if (isFacingFront && dollLookTime === null) {
+            dollLookTime = Date.now();
+        }
+
+        const oneSecondPassed = dollLookTime && (Date.now() - dollLookTime >= movementDelay);
+
+        if (mainPlayer) {
+            let moved = false;
+
+            if (moveDirection.forward) {
+                mainPlayer.position.z -= moveSpeed;
+                moved = true;
+            }
+            if (moveDirection.backward) {
+                mainPlayer.position.z += moveSpeed;
+                moved = true;
+            }
+            if (moveDirection.left) {
+                mainPlayer.position.x -= moveSpeed;
+                moved = true;
+            }
+            if (moveDirection.right) {
+                mainPlayer.position.x += moveSpeed;
+                moved = true;
+            }
+
+            
+            if (moved && oneSecondPassed) {
+                makePlayerFall(mainPlayer);
+            }
+        }
+
+        //------------Move-Players----------
+        players.forEach((player, index) => {
+            if (index !== 0) { 
+                let moveData = playerMoves[index];
+
+                if (!moveData) {
+                    playerMoves[index] = {
+                        lastMoveTime: Date.now(),
+                        speed: Math.random() * (randomPlayerSpeedMax - randomPlayerSpeedMin) + randomPlayerSpeedMin,
+                    };
+                    moveData = playerMoves[index];
+                }
+
+                if (player.position.z > redLineZ) {
+                    if (Date.now() - moveData.lastMoveTime > moveIntervalTime) {
+                        player.position.z -= moveData.speed;
+                        moveData.lastMoveTime = Date.now();
+                                              
+                        if (oneSecondPassed) {
+                            makePlayerFall(player);
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!isFacingFront) {
+            dollLookTime = null;
+        }
+    }
+
+    renderer.render(scene, camera);
+}
+
+//---------Main-Player-fall------
+function makePlayerFall(player) {
+  gsap.to(player.rotation, { x: Math.PI / 2, duration: 0.5 }); 
+  gsap.to(player.position, { y: player.position.y - 1, duration: 0.5 }); 
+
+  setTimeout(() => {
+      const countdownScreen = document.getElementById("countdownScreen");
+      countdownScreen.textContent = "Game Over...!";
+      countdownScreen.style.opacity = "1";
+      countdownScreen.style.display = "block";
+
+      setTimeout(() => {
+          restartGame();
+      }, 2000); 
+  }, 500);
+}
+//--------Restart-Game----------
+function restartGame() {
+ 
+  gameStarted = false;
+
+  if (mainPlayer) {
+      mainPlayer.position.set(0, -1, 18);
+      mainPlayer.rotation.set(0, Math.PI, 0);
+  }
+
+  players.forEach((player, index) => {
+      if (index !== 0) { 
+          player.position.set(playerPositions[index - 1][0], -1, playerPositions[index - 1][2]);
+      }
+  });
+
+  //---------Countdown---------
+  const countdownScreen = document.getElementById("countdownScreen");
+  countdownScreen.style.display = "block";
+  countdownScreen.textContent = "3"; 
+
+  let count = 3;
+  const countdownInterval = setInterval(() => {
+      count--;
+      if (count > 0) {
+          countdownScreen.textContent = count;
+      } else {
+          clearInterval(countdownInterval);
+          countdownScreen.style.display = "none";
+          gameStarted = true; 
+      }
+  }, 1000);
+}
+
+let mainPlayerCrossedLine = false; 
+
+function checkForWin() {
+    if (mainPlayer.position.z < redLineZ && !mainPlayerCrossedLine) {
+        mainPlayerCrossedLine = true; 
+        displayWinMessage();
+    }
+}
+
+//-----Won-Message----
+function displayWinMessage() {
+    const countdownScreen = document.getElementById("countdownScreen");
+    countdownScreen.textContent = "You Won!";
+    countdownScreen.style.opacity = "1"; 
+
+    setTimeout(() => {
+        countdownScreen.style.opacity = "0"; 
+    }, 2000); 
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (gameStarted) {
+      if (mainPlayer) {
+          let moved = false;
+
+          if (moveDirection.forward) {
+              mainPlayer.position.z -= moveSpeed;
+              moved = true;
+          }
+          if (moveDirection.backward) {
+              mainPlayer.position.z += moveSpeed;
+              moved = true;
+          }
+          if (moveDirection.left) {
+              mainPlayer.position.x -= moveSpeed;
+              moved = true;
+          }
+          if (moveDirection.right) {
+              mainPlayer.position.x += moveSpeed;
+              moved = true;
+          }
+
+          
+          if (mainPlayer.position.z <= redLineZ) {
+             
+              const countdownScreen = document.getElementById("countdownScreen");
+              countdownScreen.textContent = "You Won...!";
+              countdownScreen.style.opacity = "1";
+              countdownScreen.style.display = "block";
+
+             
+              setTimeout(() => {
+                  restartGame();
+              }, 2000); 
+          }
+          
+          if (moved && oneSecondPassed) {
+              makePlayerFall(mainPlayer);
+          }
+      }
+      players.forEach((player, index) => {
+          if (index !== 0) { 
+              let moveData = playerMoves[index];
+
+              if (!moveData) {
+                  playerMoves[index] = {
+                      lastMoveTime: Date.now(),
+                      speed: Math.random() * (randomPlayerSpeedMax - randomPlayerSpeedMin) + randomPlayerSpeedMin,
+                  };
+                  moveData = playerMoves[index];
+              }
+
+              if (player.position.z > redLineZ) {
+                  if (Date.now() - moveData.lastMoveTime > moveIntervalTime) {
+                      player.position.z -= moveData.speed;
+                      moveData.lastMoveTime = Date.now();
+                      
+                      
+                      if (oneSecondPassed) {
+                          makePlayerFall(player);
+                      }
+                  }
+              }
+          }
+      });
+
+      if (!isFacingFront) {
+          dollLookTime = null;
+      }
+  }
+  renderer.render(scene, camera);
+}
 
 
 
