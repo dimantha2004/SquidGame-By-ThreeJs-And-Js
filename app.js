@@ -172,7 +172,6 @@ function createPlane() {
 }
 createPlane();
 
-
 loader.load('model3/scene.gltf', (gltf) => {
   const player = gltf.scene;
   player.scale.set(1, 1, 1);
@@ -207,7 +206,7 @@ playerPositions.forEach(pos => {
 });
 
 let moveDirection = { forward: false, backward: false, left: false, right: false };
-const moveSpeed = 0.1;
+const moveSpeed = 0.02;
 
 document.addEventListener("keydown", (event) => {
   if (!gameStarted) return; 
