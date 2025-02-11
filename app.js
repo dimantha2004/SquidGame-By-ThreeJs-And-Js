@@ -114,13 +114,12 @@ loader.load(
   'model/scene.gltf', 
   (gltf) => {
     doll = gltf.scene;
-    doll.scale.set(0.4, 0.4, 0.4);
-    doll.position.set(0, 1, -10);
+    doll.scale.set(0.5, 0.5, 0.5);
+    doll.position.set(0, 1.5, -10);
     
     doll.rotation.y = Math.PI;
     scene.add(doll);
 
-    
     setInterval(() => {
       isFacingFront = !isFacingFront;
       gsap.to(doll.rotation, { y: isFacingFront ? 0 : Math.PI, duration: 1 });
@@ -131,7 +130,6 @@ loader.load(
     console.error('Error loading the doll model:', error);
   }
 );
-
 
 //--- Army ---
 loader.load(
