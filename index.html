@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three.js</title>
+    <title>Three.js Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+
     <div id="loadingScreen">
         <div class="spinner"></div>
         <div id="loadingText">Loading...</div>
     </div>
 
-    <div id="countdownScreen">3</div>
+   
+    <div id="countdownScreen"></div>
 
-    <div id="gameMessage" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    font-size: 40px; font-weight: bold; color: red; text-shadow: 2px 2px 5px black;">
-        You Out...
+    <div id="gameMessage">
+        <span>You Out...!</span>
     </div>
 
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>   
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>   

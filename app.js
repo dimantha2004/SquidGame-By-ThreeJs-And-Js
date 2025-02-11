@@ -6,14 +6,18 @@ function startCountdown(callback) {
     let count = 3;
 
     countdownScreen.style.opacity = "1"; 
+    countdownScreen.style.display = "flex"; 
 
-    const interval = setInterval(() => {
+    function updateCountdown() {
         if (count > 0) {
             countdownScreen.textContent = count;
+            gsap.fromTo(countdownScreen, { scale: 3, opacity: 1 }, { scale: 1, opacity: 0.6, duration: 0.5 });
             count--;
+            setTimeout(updateCountdown, 1000);
         } else {
-            countdownScreen.textContent = "Game Start!";
-            clearInterval(interval);
+            countdownScreen.textContent = "GO!";
+            gsap.fromTo(countdownScreen, { scale: 3, opacity: 1 }, { scale: 1, opacity: 0, duration: 0.8 });
+
             setTimeout(() => {
                 countdownScreen.style.opacity = "0"; 
                 setTimeout(() => {
@@ -23,8 +27,11 @@ function startCountdown(callback) {
                 }, 500);
             }, 1000);
         }
-    }, 1000);
+    }
+
+    updateCountdown();
 }
+
 
 function loadGame() {
     setTimeout(() => {
@@ -382,7 +389,6 @@ function restartGame() {
   });
 
   //---------Countdown----------
-
   const countdownScreen = document.getElementById("countdownScreen");
   countdownScreen.style.display = "block";
   countdownScreen.textContent = "3";
