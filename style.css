@@ -98,7 +98,6 @@ body {
     100% { text-shadow: 0 0 50px rgba(255, 64, 129, 1), 0 0 50px rgba(255, 64, 129, 0.8); }
 }
 
-/* Smooth Button Styling */
 button {
     padding: 20px 40px;
     background-color: #212121; 
