@@ -131,7 +131,7 @@ loader.load(
   }
 );
 
-//--- Army ---
+//---------- Army --------------
 loader.load(
   'model5/scene.gltf', 
   (gltf) => {
@@ -146,7 +146,7 @@ loader.load(
   }
 );
 
-//--- Army1 ---
+//--------- Army1 -------------
 loader.load(
   'model5/scene.gltf', 
   (gltf) => {
@@ -264,7 +264,7 @@ createLine(16, 0xffffff);
 createLine(-6, 0xff0000);
 
 //---------Move the Players---------
-const randomPlayerSpeedMin = 0.6; 
+const randomPlayerSpeedMin = 0.5; 
 const randomPlayerSpeedMax = 1; 
 const redLineZ = -6; 
 const moveIntervalTime = 3000; 
@@ -411,7 +411,7 @@ function displayWinMessage() {
   countdownScreen.style.display = "block"; 
 
   setTimeout(() => {
-    const playAgain = confirm("Do you want to play again?");
+    const playAgain = confirm("Do you want to play again...?");
     if (playAgain) {
       restartGame(); 
     } else {
@@ -421,90 +421,26 @@ function displayWinMessage() {
     countdownScreen.style.display = "none"; 
   }, 2000);
 }
-let gameWon = false; 
 
-function animate() {
-  requestAnimationFrame(animate);
-
-  if (gameStarted && !gameWon) { 
-      if (isFacingFront && dollLookTime === null) {
-          dollLookTime = Date.now(); 
-      }
-      const oneSecondPassed = dollLookTime && (Date.now() - dollLookTime >= 1000);
-
-      if (mainPlayer && !playerFallen) {
-          let moved = false;
-
-          if (moveDirection.forward) {
-              mainPlayer.position.z -= moveSpeed;
-              moved = true;
-          }
-          if (moveDirection.backward) {
-              mainPlayer.position.z += moveSpeed;
-              moved = true;
-          }
-          if (moveDirection.left) {
-              mainPlayer.position.x -= moveSpeed;
-              moved = true;
-          }
-          if (moveDirection.right) {
-              mainPlayer.position.x += moveSpeed;
-              moved = true;
-          }
-         
-          if (mainPlayer.position.z <= redLineZ) {
-              gameWon = true; 
-              displayWinMessage();
-          }
-
-          if (moved && isFacingFront) {
-              playerFallen = true;
-              makePlayerFall(mainPlayer, true);
-          }
-          if (moved && halfSecondPassed && !playerFallen) {
-              playerFallen = true;
-              makePlayerFall(mainPlayer, true);
-          }
-      }
-      players.forEach((player, index) => {
-          if (index !== 0) { 
-              let moveData = playerMoves[index];
-              if (!moveData) {
-                  playerMoves[index] = {
-                      lastMoveTime: Date.now(),
-                      speed: Math.random() * (randomPlayerSpeedMax - randomPlayerSpeedMin) + randomPlayerSpeedMin,
-                  };
-                  moveData = playerMoves[index];
-              }
-              if (player.position.z > redLineZ && !player.userData.hasFallen) {
-                  if (Date.now() - moveData.lastMoveTime > moveIntervalTime) {
-                      player.position.z -= moveData.speed;
-                      moveData.lastMoveTime = Date.now();
-                      
-                      if (halfSecondPassed) {
-                          makePlayerFall(player);
-                      }
-                  }
-              }
-          }
-      });
-      if (!isFacingFront) {
-          dollLookTime = null;
-      }
-  }
-  renderer.render(scene, camera);
-}
-
-let playersFinished = 0; 
+let gameWon = false;
+let playersFinished = 0;
+let oneSecondWindowActive = false; 
 
 function animate() {
     requestAnimationFrame(animate);
 
-    if (gameStarted && !gameWon) { 
+    if (gameStarted && !gameWon) {
+        
         if (isFacingFront && dollLookTime === null) {
             dollLookTime = Date.now(); 
+            oneSecondWindowActive = true; 
         }
+
         const oneSecondPassed = dollLookTime && (Date.now() - dollLookTime >= 1000);
+
+        if (oneSecondPassed) {
+            oneSecondWindowActive = false;
+        }
 
         if (mainPlayer && !playerFallen) {
             let moved = false;
@@ -525,23 +461,19 @@ function animate() {
                 mainPlayer.position.x += moveSpeed;
                 moved = true;
             }
-          
+
             if (mainPlayer.position.z <= redLineZ) {
-                gameWon = true; 
-                const rank = playersFinished + 1; 
+                gameWon = true;
+                const rank = playersFinished + 1;
 
                 if (rank === 1) {
-                    displayWinMessage(); 
+                    displayWinMessage();
                 } else {
-                    showRankAndRestart(rank); 
+                    showRankAndRestart(rank);
                 }
             }
 
             if (moved && isFacingFront) {
-                playerFallen = true;
-                makePlayerFall(mainPlayer, true);
-            }
-            if (moved && halfSecondPassed && !playerFallen) {
                 playerFallen = true;
                 makePlayerFall(mainPlayer, true);
             }
@@ -563,8 +495,8 @@ function animate() {
                     if (Date.now() - moveData.lastMoveTime > moveIntervalTime) {
                         player.position.z -= moveData.speed;
                         moveData.lastMoveTime = Date.now();
-                        
-                        if (halfSecondPassed) {
+
+                        if (oneSecondWindowActive) {
                             makePlayerFall(player);
                         }
                     }
@@ -579,11 +511,101 @@ function animate() {
 
         if (!isFacingFront) {
             dollLookTime = null;
+            oneSecondWindowActive = false;
         }
     }
 
     renderer.render(scene, camera);
 }
+// let gameWon = false;
+// let playersFinished = 0;
+
+// function animate() {
+//     requestAnimationFrame(animate);
+
+//     if (gameStarted && !gameWon) {
+
+//         if (isFacingFront && dollLookTime === null) {
+//             dollLookTime = Date.now();
+//         }
+//         const oneSecondPassed = dollLookTime && (Date.now() - dollLookTime >= 1000);
+
+//         if (mainPlayer && !playerFallen) {
+//             let moved = false;
+
+//             if (moveDirection.forward) {
+//                 mainPlayer.position.z -= moveSpeed;
+//                 moved = true;
+//             }
+//             if (moveDirection.backward) {
+//                 mainPlayer.position.z += moveSpeed;
+//                 moved = true;
+//             }
+//             if (moveDirection.left) {
+//                 mainPlayer.position.x -= moveSpeed;
+//                 moved = true;
+//             }
+//             if (moveDirection.right) {
+//                 mainPlayer.position.x += moveSpeed;
+//                 moved = true;
+//             }
+
+//             if (mainPlayer.position.z <= redLineZ) {
+//                 gameWon = true;
+//                 const rank = playersFinished + 1;
+
+//                 if (rank === 1) {
+//                     displayWinMessage();
+//                 } else {
+//                     showRankAndRestart(rank);
+//                 }
+//             }
+
+//             if (moved && isFacingFront) {
+//                 playerFallen = true;
+//                 makePlayerFall(mainPlayer, true);
+//             }
+//         }
+
+//         players.forEach((player, index) => {
+//             if (index !== 0) { 
+//                 let moveData = playerMoves[index];
+
+//                 if (!moveData) {
+//                     playerMoves[index] = {
+//                         lastMoveTime: Date.now(),
+//                         speed: Math.random() * (randomPlayerSpeedMax - randomPlayerSpeedMin) + randomPlayerSpeedMin,
+//                     };
+//                     moveData = playerMoves[index];
+//                 }
+
+//                 if (player.position.z > redLineZ && !player.userData.hasFallen) {
+//                     if (Date.now() - moveData.lastMoveTime > moveIntervalTime) {
+//                         player.position.z -= moveData.speed;
+//                         moveData.lastMoveTime = Date.now();
+
+
+//                         if (oneSecondPassed) {
+//                             makePlayerFall(player);
+//                         }
+//                     }
+//                 }
+
+//                 if (player.position.z <= redLineZ && !player.userData.hasFinished) {
+//                     playersFinished++;
+//                     player.userData.hasFinished = true;
+//                 }
+//             }
+//         });
+
+//         if (!isFacingFront) {
+//             dollLookTime = null;
+//         }
+//     }
+
+//     renderer.render(scene, camera);
+// }
+ 
 
 function showRankAndRestart(rank) {
     alert(`You are ${rank}${getOrdinalSuffix(rank)} place...!`);
