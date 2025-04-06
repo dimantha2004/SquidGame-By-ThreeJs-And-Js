@@ -79,21 +79,6 @@ const players=[];
 let mainPlayer = null;
 
 
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
 loader.load(
   'model6/scene.gltf', 
   (gltf) => {
