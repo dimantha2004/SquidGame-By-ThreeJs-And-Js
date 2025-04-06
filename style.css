@@ -13,7 +13,7 @@ body {
     overflow: hidden;
 }
 
-/* Enhanced background effect */
+
 body::before {
     content: '';
     position: absolute;
@@ -39,7 +39,7 @@ body::after {
     z-index: -1;
 }
 
-/* Loading screen enhanced */
+
 #loadingScreen {
     position: fixed;
     top: 0;
@@ -56,7 +56,7 @@ body::after {
     transition: opacity 1.5s ease-in-out;
 }
 
-/* Animated particles in the loading screen */
+
 #loadingScreen::before {
     content: '';
     position: absolute;
@@ -71,7 +71,7 @@ body::after {
     opacity: 0.5;
 }
 
-/* Enhanced spinner */
+
 .spinner {
     width: 120px;
     height: 120px;
@@ -107,7 +107,7 @@ body::after {
     animation: spin 2.4s linear infinite;
 }
 
-/* Enhanced loading text */
+
 #loadingText {
     font-weight: 800;
     font-size: 32px;
@@ -137,7 +137,7 @@ body::after {
     animation: gradientText 3s ease infinite;
 }
 
-/* Enhanced countdown screen */
+
 #countdownScreen {
     position: fixed;
     top: 0;
@@ -169,7 +169,7 @@ body::after {
     z-index: -1;
 }
 
-/* Game message styling */
+
 #gameMessage {
     display: none;
     position: absolute;
@@ -191,7 +191,7 @@ body::after {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
-/* Enhanced button styling */
+
 button {
     padding: 20px 40px;
     background: linear-gradient(145deg, #212121, #333333);
@@ -249,7 +249,7 @@ button:active {
     transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Final message styling */
+
 .final-message {
     font-size: 3.5em;
     font-weight: 800;
@@ -285,7 +285,7 @@ button:active {
     z-index: -1;
 }
 
-/* HUD elements for game status */
+
 .game-hud {
     position: fixed;
     top: 20px;
@@ -322,7 +322,7 @@ button:active {
     color: #00bcd4;
 }
 
-/* Game controls guide */
+
 .controls-guide {
     position: fixed;
     bottom: 20px;
@@ -361,7 +361,7 @@ button:active {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Mobile controls */
+
 .mobile-controls {
     position: fixed;
     bottom: 30px;
@@ -422,7 +422,7 @@ button:active {
     grid-row: 3;
 }
 
-/* Animated progress bar for loading */
+
 .progress-container {
     width: 300px;
     height: 6px;
@@ -454,7 +454,7 @@ button:active {
     animation: progressShine 1.5s linear infinite;
 }
 
-/* Enhanced win/lose message */
+
 .game-result {
     position: fixed;
     top: 50%;
@@ -499,7 +499,7 @@ button:active {
     margin-top: 30px;
 }
 
-/* Animations */
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -564,7 +564,7 @@ button:active {
     to { transform: translateY(0); opacity: 1; }
 }
 
-/* Media Queries for Responsiveness */
+
 @media (max-width: 768px) {
     #loadingText {
         font-size: 24px;
@@ -638,7 +638,7 @@ button:active {
     }
 }
 
-/* Custom styling for better player visibility */
+
 .player-highlight {
     position: absolute;
     width: 50px;

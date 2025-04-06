@@ -1,4 +1,4 @@
-//------Loading-Page------
+
 let gameStarted = false; 
 
 function startCountdown(callback) {
@@ -71,28 +71,28 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.update();
 
-// ---------Load-All-GLTF--------
+
 const loader = new THREE.GLTFLoader();
 let doll, mainplayer, army, army1,tree;
 let isFacingFront = false;
 const players=[];
 let mainPlayer = null;
 
-// loader.load(
-//   'model7/scene.gltf', 
-//   (gltf) => {
-//     background = gltf.scene;
-//     background.scale.set(5, 5, 5);
-//     background.position.set(1, 1, 1);
+
+
+
+
+
+
     
-//     background.rotation.y = Math.PI;
-//     scene.add(background);
-//   },
-//   undefined,
-//   (error) => {
-//     console.error('Error loading the background model:', error);
-//   }
-// );
+
+
+
+
+
+
+
+
 
 loader.load(
   'model6/scene.gltf', 
@@ -131,7 +131,7 @@ loader.load(
   }
 );
 
-//---------- Army --------------
+
 loader.load(
   'model5/scene.gltf', 
   (gltf) => {
@@ -146,7 +146,7 @@ loader.load(
   }
 );
 
-//--------- Army1 -------------
+
 loader.load(
   'model5/scene.gltf', 
   (gltf) => {
@@ -161,7 +161,7 @@ loader.load(
   }
 );
 
-//--- Floor ---
+
 function createPlane() {
   const planeGeometry = new THREE.PlaneGeometry(20, 40);
   const planeMaterial = new THREE.MeshStandardMaterial({ color: 0x8b8b8b });
@@ -236,7 +236,7 @@ document.addEventListener('keyup', (event) => {
   }
 });
 
-//-------Update movement----------
+
 function animate() {
   requestAnimationFrame(animate);
 
@@ -251,7 +251,7 @@ function animate() {
 }
 animate();
 
-//-----------Start-&-Finish-Line---
+
 function createLine(positionZ, color) {
   const geometry = new THREE.PlaneGeometry(17, 0.2); 
   const material = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
@@ -263,7 +263,7 @@ function createLine(positionZ, color) {
 createLine(16, 0xffffff);
 createLine(-6, 0xff0000);
 
-//---------Move the Players---------
+
 const randomPlayerSpeedMin = 0.5; 
 const randomPlayerSpeedMax = 1; 
 const redLineZ = -6; 
@@ -298,7 +298,7 @@ function movePlayersRandomly() {
   });
 }
 
- //----------Players-Fall----------------
+ 
 function makePlayerFall(player, isMainPlayer = false) {
   if (player.userData && player.userData.hasFallen) return; 
   player.userData = { hasFallen: true };
@@ -315,7 +315,7 @@ function makePlayerFall(player, isMainPlayer = false) {
 }
 let mainPlayerCrossedLine = false;
 
-//-------------Check-Win---------------
+
 function checkForWin() {
     if (mainPlayer.position.z < redLineZ && !mainPlayerCrossedLine) {
         mainPlayerCrossedLine = true; 
@@ -331,7 +331,7 @@ function checkForWin() {
     }
 }
 
-//----------Main-Player-Fall-------------
+
 function makePlayerFall(player, isMainPlayer = false) {
   if (player.userData && player.userData.hasFallen) return;
   player.userData = { hasFallen: true };
@@ -385,7 +385,7 @@ function restartGame() {
       }
   });
 
-  //---------Countdown----------
+  
   const countdownScreen = document.getElementById("countdownScreen");
   countdownScreen.style.display = "block";
   countdownScreen.textContent = "3";
@@ -403,7 +403,7 @@ function restartGame() {
   }, 1000);
 }
 
-//-----------Won-Message----------
+
 function displayWinMessage() {
   const countdownScreen = document.getElementById("countdownScreen");
   countdownScreen.textContent = "🎉 You Won...! 🎉";
@@ -517,95 +517,6 @@ function animate() {
 
     renderer.render(scene, camera);
 }
-// let gameWon = false;
-// let playersFinished = 0;
-
-// function animate() {
-//     requestAnimationFrame(animate);
-
-//     if (gameStarted && !gameWon) {
-
-//         if (isFacingFront && dollLookTime === null) {
-//             dollLookTime = Date.now();
-//         }
-//         const oneSecondPassed = dollLookTime && (Date.now() - dollLookTime >= 1000);
-
-//         if (mainPlayer && !playerFallen) {
-//             let moved = false;
-
-//             if (moveDirection.forward) {
-//                 mainPlayer.position.z -= moveSpeed;
-//                 moved = true;
-//             }
-//             if (moveDirection.backward) {
-//                 mainPlayer.position.z += moveSpeed;
-//                 moved = true;
-//             }
-//             if (moveDirection.left) {
-//                 mainPlayer.position.x -= moveSpeed;
-//                 moved = true;
-//             }
-//             if (moveDirection.right) {
-//                 mainPlayer.position.x += moveSpeed;
-//                 moved = true;
-//             }
-
-//             if (mainPlayer.position.z <= redLineZ) {
-//                 gameWon = true;
-//                 const rank = playersFinished + 1;
-
-//                 if (rank === 1) {
-//                     displayWinMessage();
-//                 } else {
-//                     showRankAndRestart(rank);
-//                 }
-//             }
-
-//             if (moved && isFacingFront) {
-//                 playerFallen = true;
-//                 makePlayerFall(mainPlayer, true);
-//             }
-//         }
-
-//         players.forEach((player, index) => {
-//             if (index !== 0) { 
-//                 let moveData = playerMoves[index];
-
-//                 if (!moveData) {
-//                     playerMoves[index] = {
-//                         lastMoveTime: Date.now(),
-//                         speed: Math.random() * (randomPlayerSpeedMax - randomPlayerSpeedMin) + randomPlayerSpeedMin,
-//                     };
-//                     moveData = playerMoves[index];
-//                 }
-
-//                 if (player.position.z > redLineZ && !player.userData.hasFallen) {
-//                     if (Date.now() - moveData.lastMoveTime > moveIntervalTime) {
-//                         player.position.z -= moveData.speed;
-//                         moveData.lastMoveTime = Date.now();
-
-
-//                         if (oneSecondPassed) {
-//                             makePlayerFall(player);
-//                         }
-//                     }
-//                 }
-
-//                 if (player.position.z <= redLineZ && !player.userData.hasFinished) {
-//                     playersFinished++;
-//                     player.userData.hasFinished = true;
-//                 }
-//             }
-//         });
-
-//         if (!isFacingFront) {
-//             dollLookTime = null;
-//         }
-//     }
-
-//     renderer.render(scene, camera);
-// }
- 
 
 function showRankAndRestart(rank) {
     alert(`You are ${rank}${getOrdinalSuffix(rank)} place...!`);
