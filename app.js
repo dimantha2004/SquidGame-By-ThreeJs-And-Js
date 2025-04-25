@@ -1,4 +1,3 @@
-
 let gameStarted = false; 
 
 function startCountdown(callback) {
